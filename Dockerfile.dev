@@ -1,0 +1,22 @@
+FROM couchbase:latest
+
+RUN apt-get update
+RUN apt-get -y install zip unzip
+
+COPY configure-node.sh /opt/couchbase
+COPY ./data/retailsample_data.zip /opt/couchbase
+COPY ./data/indexes.txt /opt/couchbase
+COPY ./data/basic_search_idx.json /opt/couchbase
+
+RUN chmod +x /opt/couchbase/configure-node.sh
+
+ENV CB_HOST 127.0.0.1
+ENV CB_PORT 8091
+ENV CB_URL ${CB_HOST}:${CB_PORT}
+ENV CB_USER Administrator
+ENV CB_PASSWORD password
+ENV CB_BUCKET retailsample
+
+#tell image what to do when it starts
+#as long as it is not over-written at the command line (i.e. docker run ...)
+CMD ["/opt/couchbase/configure-node.sh"]
